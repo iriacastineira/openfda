@@ -9,6 +9,24 @@ MAX_OPEN_REQUESTS = 5
 def process_client(clientsocket):
     print(clientsocket)
     print(clientsocket.recv(1024))
+
+    import http.client
+    import json
+
+    headers = {'User-Agent': 'http-client'}
+
+    conn = http.client.HTTPSConnection("api.fda.gov")
+    conn.request("GET", "/drug/label.json?limit=10", None, headers)
+    r1 = conn.getresponse()
+    print(r1.status, r1.reason)
+    repos_raw = r1.read().decode("utf-8")
+    conn.close()
+    repos = json.loads(repos_raw)
+    cont = \
+        a = 1
+    for elem in repos["results"]:
+            print("The id of the drug number", a, "is", elem['id'])
+            a += 1
     with open("firstweb.html","r") as f:
 	    cont =f.read()
     web_contents = cont
@@ -18,13 +36,12 @@ def process_client(clientsocket):
     clientsocket.send(str.encode(web_headers + "\n\n" + web_contents))
     clientsocket.close()
 
-
 # create an INET, STREAMing socket
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # bind the socket to a public host, and a well-known port
 hostname = socket.gethostname()
 # Let's use better the local interface name
-hostname = "10.10.104.188"
+hostname = "10.10.106.203"
 try:
     serversocket.bind((hostname, PORT))
     # become a server socket
