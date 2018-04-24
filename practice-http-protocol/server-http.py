@@ -22,10 +22,11 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         # Write content as utf-8 data
         hola = self.wfile.write(bytes(message, "utf8"))
 	    path = self.path
-	    if path == "/":
-        filename = "index.html"
+	    if self.path == "/":
+            
+
 	    else:
-        if path == "/new":
+        if path == "/search":
             filename = "new.html"
         else:
             filename = "error.html"
