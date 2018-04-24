@@ -3,7 +3,7 @@
 
 import socket
 
-PORT = 8092
+PORT = 8010
 MAX_OPEN_REQUESTS = 5
 
 def process_client(clientsocket):
@@ -28,17 +28,22 @@ def process_client(clientsocket):
     intro = "<!DOCTYPE html>" + "\n" + "<html>" + "\n" + "<head>" +"\n" + "<body>" + "\n" + "<ol>"
     end = "<ol>" + "\n" + "</body>" + "\n" + "</head>" +"\n" + "</html>"
     while i<10:
-        if "active_ingredient" in repos["results"]:
-            list.append(repos["results"][active_ingredient][0])
-            i=i+1
+        if "active_ingredient" in repos["results"][i]:
+            list.append(repos["results"][i]["active_ingredient"][0])
+            i +=1
         else:
-            print("There isn't a drug for this index")
-            i = i+1
+            list.append("There isn't a drug for this index")
+            i +=1
+    with open("h.html", "w") as f:
+        f.write(intro)
+        for word in list:
+            word1="<li>" + word + "</li>"
+            f.write(word1)
+        f.write(end)
 
-
-    with open("h.html","w") as f:
-	    cont =f.read()
-    web_contents = cont
+    with open("h.html","r") as f:
+	    content =f.read()
+    web_contents = content
     web_headers = "HTTP/1.1 200"
     web_headers += "\n" + "Content-Type: text/html"
     web_headers += "\n" + "Content-Length: %i" % len(str.encode(web_contents))
@@ -50,7 +55,7 @@ serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # bind the socket to a public host, and a well-known port
 hostname = socket.gethostname()
 # Let's use better the local interface name
-hostname = "10.10.106.203"
+hostname = "localhost"
 try:
     serversocket.bind((hostname, PORT))
     # become a server socket
