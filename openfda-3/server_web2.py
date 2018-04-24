@@ -22,12 +22,21 @@ def process_client(clientsocket):
     repos_raw = r1.read().decode("utf-8")
     conn.close()
     repos = json.loads(repos_raw)
-    cont = \
-        a = 1
-    for elem in repos["results"]:
-            print("The id of the drug number", a, "is", elem['id'])
-            a += 1
-    with open("firstweb.html","r") as f:
+
+    list = []
+    i = 0
+    intro = "<!DOCTYPE html>" + "\n" + "<html>" + "\n" + "<head>" +"\n" + "<body>" + "\n" + "<ol>"
+    end = "<ol>" + "\n" + "</body>" + "\n" + "</head>" +"\n" + "</html>"
+    while i<10:
+        if "active_ingredient" in repos["results"]:
+            list.append(repos["results"][active_ingredient][0])
+            i=i+1
+        else:
+            print("There isn't a drug for this index")
+            i = i+1
+
+
+    with open("h.html","w") as f:
 	    cont =f.read()
     web_contents = cont
     web_headers = "HTTP/1.1 200"
