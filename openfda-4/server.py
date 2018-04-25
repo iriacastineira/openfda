@@ -18,24 +18,21 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
         # Send message back to client
-        message = "Hello world! " + self.path
+
         # Write content as utf-8 data
-        hola = self.wfile.write(bytes(message, "utf8"))
+
         path = self.path
         if path == "/":
-            filename = "h.html"
+            with open ("search.html", "r") as f:
+                code = f.read()
+                self.wfile.write(bytes(message, "utf8"))
+        if "search" in path:
+            header = "Content-Type: text/html\n"
+            conn = http.client.HTTPSConnection("api.fda.gov")
+            
 
 
-        else:
 
-    if path == "/search":
-        filename = "new.html"
-    else:
-        filename = "error.html"
-    print("File served!")
-    with open(filename, "r") as f:
-        content = f.read()
-    header = "Content-Type: text/html\n"
     header += "Content-Length: {}\n".format(len(str.encode(content)))
     response_msg = str.encode(status_line + header + "\n" + content)
     clientsocket.send(response_msg)
