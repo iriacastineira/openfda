@@ -38,7 +38,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             drugs_raw = r1.read().decode("utf-8")
             conn.close()
             drug = json.loads(drugs_raw)
-            drugsfinal = str (drug)
+            drugsfinal = str(drug)
             self.wfile.write(bytes(drugsfinal, "utf8"))
         return
 
