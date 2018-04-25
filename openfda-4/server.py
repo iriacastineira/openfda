@@ -1,5 +1,8 @@
 import http.server
 import socketserver
+import json
+import http.client
+
 
 # -- IP and the port of the server
 IP = "localhost"  # Localhost means "I": your local machine
@@ -10,10 +13,7 @@ PORT = 8002
 class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     # GET
     def do_GET(self):
-        # Send response status code
         self.send_response(200)
-
-        # Send headers
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
@@ -25,20 +25,25 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         if path == "/":
             with open ("search.html", "r") as f:
                 code = f.read()
-                self.wfile.write(bytes(message, "utf8"))
+                self.wfile.write(bytes(code, "utf8"))
         if "search" in path:
             header = "Content-Type: text/html\n"
             conn = http.client.HTTPSConnection("api.fda.gov")
-            
+            information = path.split("?")[1]
+            drug = information.split("=")[1].split("&")[0]
+            limit = information.split("&")[1].split("=")[1]
+            url = "/drug/label.json?search=active_ingredient:" + drug + "&" + "limit=" + limit
+            conn.request("GET", url, None, header)
+            r1 = conn.getresponse()
+            drugs_raw = r1.read().decode("utf-8")
+            conn.close()
+            drugs = json.loads(drugs_raw)
+            drugsfinal = str(drugs)
+            self.wfile.write(bytes(drugsfinal, "utf8"))
+        return
 
 
 
-    header += "Content-Length: {}\n".format(len(str.encode(content)))
-    response_msg = str.encode(status_line + header + "\n" + content)
-    clientsocket.send(response_msg)
-
-
-return
 
 # Handler = http.server.SimpleHTTPRequestHandler
 Handler = testHTTPRequestHandler
