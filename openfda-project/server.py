@@ -21,7 +21,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         # Write content as utf-8 data
         list = []
-        
+        i = 0
 
         path = self.path
         if path == "/":
