@@ -23,6 +23,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
 
         path = self.path
+        list = []
         if path == "/":
             with open ("search.html", "r") as f:
                 code = f.read()
@@ -39,7 +40,15 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             drugs_raw = r1.read().decode("utf-8")
             conn.close()
             drug = json.loads(drugs_raw)
-            self.wfile.write(bytes(json.dumps(drug),"utf8"))
+            drug_list = []
+            for i in range(len("results")):
+                drug_name = drug["results"][i]["openfda"]["brand_name"][0]
+                drug_list.append(drug_name)
+            self.wfile.write(bytes("<ul>"), "utf8")
+            for d in drug_list:
+                self.wfile.write(bytes("<li>", d, "<li>"), "utf8")
+            self.wfile.write(bytes("</ul>"), "utf8")
+
         elif "searchCompany" in path:
             header = {'User-Agent': 'http-client'}
             conn = http.client.HTTPSConnection("api.fda.gov")
@@ -53,6 +62,9 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             conn.close()
             companies = json.loads(drugs_raw)
             self.wfile.write(bytes(json.dumps(companies), "utf8"))
+        elif "listDrug" in path:
+
+
         return
 
 
