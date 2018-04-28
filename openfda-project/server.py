@@ -3,24 +3,15 @@ import socketserver
 import json
 import http.client
 
-
-# -- IP and the port of the server
-IP = "localhost"  # Localhost means "I": your local machine
+IP = "localhost"
 PORT = 8000
 
-
-# HTTPRequestHandler class
 class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
-    # GET
+
     def do_GET(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-
-        # Send message back to client
-
-        # Write content as utf-8 data
-
 
         path = self.path
         list = []
@@ -77,7 +68,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
 
 
-# Handler = http.server.SimpleHTTPRequestHandler
 Handler = testHTTPRequestHandler
 
 httpd = socketserver.TCPServer((IP, PORT), Handler)
@@ -91,5 +81,3 @@ httpd.server_close()
 print("")
 print("Server stopped!")
 
-
-# https://github.com/joshmaker/simple-python-webserver/blob/master/server.py
