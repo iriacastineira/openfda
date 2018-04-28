@@ -61,6 +61,43 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 self.wfile.write(bytes("<li>", d, "</li>"), "utf8")
             self.wfile.write(bytes("</ul>"), "utf8")
         elif "listDrug" in path:
+            header = {'User-Agent': 'http-client'}
+            conn = http.client.HTTPSConnection("api.fda.gov")
+            information = path.split("?")[1]
+            limit = information.split("&")[1].split("=")[1]
+            conn.request("GET", url, None, header)
+            r1 = conn.getresponse()
+            drugs_raw = r1.read().decode("utf-8")
+            conn.close()
+            drugs = json.loads(drugs_raw)
+            drugs_list = []
+            for i in range(len("results")):
+                drugs_name = drugs["results"][i]["openfda"]["brand_name"][0]
+                drugs_list.append(drugs_name)
+            self.wfile.write(bytes("<ul>"), "utf8")
+            for d in drugs_list:
+                self.wfile.write(bytes("<li>", d, "</li>"), "utf8")
+            self.wfile.write(bytes("</ul>"), "utf8")
+        elif "listCompanies" in path:
+            header = {'User-Agent': 'http-client'}
+            conn = http.client.HTTPSConnection("api.fda.gov")
+            information = path.split("?")[1]
+            limit = information.split("&")[1].split("=")[1]
+            conn.request("GET", url, None, header)
+            r1 = conn.getresponse()
+            companies_raw = r1.read().decode("utf-8")
+            conn.close()
+            companies = json.loads(company_raw)
+            companies_list = []
+            for i in range(len("results")):
+                companies_name = companies["results"][i]["openfda"]["brand_name"][0]
+                companies_list.append(drugs_name)
+            self.wfile.write(bytes("<ul>"), "utf8")
+            for d in companies_list:
+                self.wfile.write(bytes("<li>", d, "</li>"), "utf8")
+            self.wfile.write(bytes("</ul>"), "utf8")
+
+
 
 
         return
