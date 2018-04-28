@@ -58,10 +58,17 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             url = "/drug/label.json?search=manufacturer_name:" + company + "&" + "limit=" + limit
             conn.request("GET", url, None, header)
             r1 = conn.getresponse()
-            companies_raw = r1.read().decode("utf-8")
+            company_raw = r1.read().decode("utf-8")
             conn.close()
-            companies = json.loads(drugs_raw)
-            self.wfile.write(bytes(json.dumps(companies), "utf8"))
+            company = json.loads(company_raw)
+            company_list = []
+            for i in range(len("results")):
+                company_name = company["results"][i]["openfda"]["brand_name"][0]
+                company_list.append(company_name)
+            self.wfile.write(bytes("<ul>"), "utf8")
+            for d in company_list:
+                self.wfile.write(bytes("<li>", d, "</li>"), "utf8")
+            self.wfile.write(bytes("</ul>"), "utf8")
         elif "listDrug" in path:
 
 
