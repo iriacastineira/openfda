@@ -16,7 +16,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         path = self.path
         list = []
         if path == "/":
-            with open ("search.html", "r") as f:
+            with open ("search_list.html", "r") as f:
                 code = f.read()
                 self.wfile.write(bytes(code, "utf8"))
         elif "searchDrug" in path:
@@ -54,7 +54,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             company = json.loads(company_raw)
             company_list = []
             for i in range(len("results")):
-                company_name = company["results"][i]["openfda"]["brand_name"][0]
+                company_name = company["results"][i]["openfda"]["manufacturer_name"][0]
                 company_list.append(company_name)
             self.wfile.write(bytes("<ul>"), "utf8")
             for d in company_list:
@@ -90,7 +90,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             companies = json.loads(company_raw)
             companies_list = []
             for i in range(len("results")):
-                companies_name = companies["results"][i]["openfda"]["brand_name"][0]
+                companies_name = companies["results"][i]["openfda"]["manufacturer_name"][0]
                 companies_list.append(drugs_name)
             self.wfile.write(bytes("<ul>"), "utf8")
             for d in companies_list:
