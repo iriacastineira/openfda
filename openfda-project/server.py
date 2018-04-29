@@ -33,8 +33,9 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             drug = json.loads(drugs_raw)
             drug_list = []
             for i in range(len("results")):
-                drug_name = drug["results"][i]["openfda"]["brand_name"][0]
-                drug_list.append(drug_name)
+                for a in range (len(drug[i]["results"]["openfda"]["brand_name"])):
+                    drug_name = drug[i]["results"]["openfda"]["brand_name"][a]
+                    drug_list.append(drug_name)
             self.wfile.write(bytes("<ul>"), "utf8")
             for d in drug_list:
                 self.wfile.write(bytes("<li>", d, "</li>"), "utf8")
@@ -54,8 +55,9 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             company = json.loads(company_raw)
             company_list = []
             for i in range(len("results")):
-                company_name = company["results"][i]["openfda"]["manufacturer_name"][0]
-                company_list.append(company_name)
+                for a in range(len(company[i]["results"]["openfda"]["manufacturer_name"])):
+                    company_name = company[i]["results"]["openfda"]["manufacturer_name"][a]
+                    company_list.append(company_name)
             self.wfile.write(bytes("<ul>"), "utf8")
             for d in company_list:
                 self.wfile.write(bytes("<li>", d, "</li>"), "utf8")
