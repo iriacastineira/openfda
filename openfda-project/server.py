@@ -35,10 +35,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             for i in range(len(drug["results"])):
                     drug_name = drug["results"][i]["openfda"]["brand_name"][0]
                     drug_list.append(drug_name)
-            self.wfile.write(bytes("<ul>"), "utf8")
+            self.wfile.write(bytes("<ul>","utf8"))
             for d in drug_list:
-                self.wfile.write(bytes("<li>", d, "</li>"), "utf8")
-            self.wfile.write(bytes("</ul>"), "utf8")
+                self.wfile.write(bytes((("<li>", d, "</li>"), "utf8"))
+            self.wfile.write(bytes("</ul>","utf8"))
 
         elif "searchCompany" in path:
             header = {'User-Agent': 'http-client'}
