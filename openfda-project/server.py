@@ -37,7 +37,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     drug_list.append(drug_name)
             self.wfile.write(bytes("<ul>","utf8"))
             for d in drug_list:
-                self.wfile.write(bytes((("<li>", d, "</li>"), "utf8"))
+                self.wfile.write(bytes((("<li>", d, "</li>"), "utf8")))
             self.wfile.write(bytes("</ul>","utf8"))
 
         elif "searchCompany" in path:
