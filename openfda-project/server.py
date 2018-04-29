@@ -32,9 +32,8 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             conn.close()
             drug = json.loads(drugs_raw)
             drug_list = []
-            for i in range(len("results")):
-                for a in range (len(drug[i]["results"]["openfda"]["brand_name"])):
-                    drug_name = drug[i]["results"]["openfda"]["brand_name"][a]
+            for i in range(len(drug["results"])):
+                    drug_name = drug["results"][i]["openfda"]["brand_name"][0]
                     drug_list.append(drug_name)
             self.wfile.write(bytes("<ul>"), "utf8")
             for d in drug_list:
