@@ -37,7 +37,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     drug_list.append(drug_name)
             self.wfile.write(bytes("<ul>","utf8"))
             for d in drug_list:
-                self.wfile.write(bytes((("<li>", d, "</li>"), "utf8")))
+                print(d)
+                message="<li>"+d+"</li>"
+                self.wfile.write(bytes(message,"utf8"))
+
             self.wfile.write(bytes("</ul>","utf8"))
 
         elif "searchCompany" in path:
@@ -53,50 +56,65 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             conn.close()
             company = json.loads(company_raw)
             company_list = []
-            for i in range(len("results")):
-                for a in range(len(company[i]["results"]["openfda"]["manufacturer_name"])):
-                    company_name = company[i]["results"]["openfda"]["manufacturer_name"][a]
+            for i in range(len(company["results"])):
+                for a in range(len(company["results"][i]["openfda"]["manufacturer_name"])):
+                    company_name = company["results"][i]["openfda"]["manufacturer_name"][a]
                     company_list.append(company_name)
-            self.wfile.write(bytes("<ul>"), "utf8")
+            self.wfile.write(bytes("<ul>", "utf8"))
             for d in company_list:
-                self.wfile.write(bytes("<li>", d, "</li>"), "utf8")
-            self.wfile.write(bytes("</ul>"), "utf8")
+                message="<li>"+ d+ "</li>"
+                self.wfile.write(bytes(message, "utf8"))
+            self.wfile.write(bytes("</ul>", "utf8"))
         elif "listDrug" in path:
             header = {'User-Agent': 'http-client'}
             conn = http.client.HTTPSConnection("api.fda.gov")
+
+            drug = self.path.split("?")[1]
+
+            url = "/drug/label.json?" + drug
             information = path.split("?")[1]
-            limit = information.split("&")[1].split("=")[1]
+            limit = information.split("=")[1]
             conn.request("GET", url, None, header)
             r1 = conn.getresponse()
             drugs_raw = r1.read().decode("utf-8")
             conn.close()
             drugs = json.loads(drugs_raw)
             drugs_list = []
-            for i in range(len("results")):
-                drugs_name = drugs["results"][i]["openfda"]["brand_name"][0]
-                drugs_list.append(drugs_name)
-            self.wfile.write(bytes("<ul>"), "utf8")
+            for i in range(len(drugs["results"])):
+                try:
+                    drugs_name = drugs["results"][i]["openfda"]["brand_name"][0]
+                    drugs_list.append(drugs_name)
+                except KeyError:
+                    drugs_list.append("Unknown")
+            self.wfile.write(bytes("<ul>", "utf8"))
             for d in drugs_list:
-                self.wfile.write(bytes("<li>", d, "</li>"), "utf8")
-            self.wfile.write(bytes("</ul>"), "utf8")
+                message="<li>"+ d+ "</li>"
+                self.wfile.write(bytes(message, "utf8"))
+            self.wfile.write(bytes("</ul>", "utf8"))
         elif "listCompanies" in path:
             header = {'User-Agent': 'http-client'}
             conn = http.client.HTTPSConnection("api.fda.gov")
+            company = self.path.split("?")[1]
+
+            url = "/drug/label.json?" + company
             information = path.split("?")[1]
-            limit = information.split("&")[1].split("=")[1]
+            limit = information.split("=")[1]
             conn.request("GET", url, None, header)
             r1 = conn.getresponse()
-            companies_raw = r1.read().decode("utf-8")
+            company_raw = r1.read().decode("utf-8")
             conn.close()
             companies = json.loads(company_raw)
             companies_list = []
-            for i in range(len("results")):
-                companies_name = companies["results"][i]["openfda"]["manufacturer_name"][0]
-                companies_list.append(drugs_name)
-            self.wfile.write(bytes("<ul>"), "utf8")
+            for i in range(len(companies["results"])):
+                try:
+                    companies_name = companies["results"][i]["openfda"]["manufacturer_name"][0]
+                except KeyError:
+                    companies_list.append(companies_name)
+            self.wfile.write(bytes("<ul>", "utf8"))
             for d in companies_list:
-                self.wfile.write(bytes("<li>", d, "</li>"), "utf8")
-            self.wfile.write(bytes("</ul>"), "utf8")
+                message="<li>"+ d+ "</li>"
+                self.wfile.write(bytes(message, "utf8"))
+            self.wfile.write(bytes("</ul>", "utf8"))
 
 
 
