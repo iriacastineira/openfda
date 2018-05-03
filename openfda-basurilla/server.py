@@ -108,9 +108,8 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             for i in range(len(companies["results"])):
                 try:
                     companies_name = companies["results"][i]["openfda"]["manufacturer_name"][0]
-                    companies_list.append(companies_name)
                 except KeyError:
-                    companies_list.append('Unknown')
+                    companies_list.append(companies_name)
             self.wfile.write(bytes("<ul>", "utf8"))
             for d in companies_list:
                 message="<li>"+ d+ "</li>"

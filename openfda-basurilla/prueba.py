@@ -94,26 +94,34 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif "listCompanies" in path:
             header = {'User-Agent': 'http-client'}
             conn = http.client.HTTPSConnection("api.fda.gov")
-            company = self.path.split("?")[1]
+            limit = self.path.split("=")[1]
 
-            url = "/drug/label.json?" + company
-            information = path.split("?")[1]
-            limit = information.split("=")[1]
+            url = "/drug/label.json?limit=" + limit
             conn.request("GET", url, None, header)
             r1 = conn.getresponse()
             company_raw = r1.read().decode("utf-8")
             conn.close()
             companies = json.loads(company_raw)
             companies_list = []
-            for i in range(len(companies["results"])):
+            limi = int(limit)
+            a = 0
+
+            while a < limi:
                 try:
-                    companies_name = companies["results"][i]["openfda"]["manufacturer_name"][0]
-                    companies_list.append(companies_name)
+                    companies_list = companies["results"][i]["openfda"]["manufacturer_name"][0]
+                    a += 1
                 except KeyError:
                     companies_list.append('Unknown')
+
             self.wfile.write(bytes("<ul>", "utf8"))
-            for d in companies_list:
-                message="<li>"+ d+ "</li>"
+
+            with open("list_drug.html", "w") as f:
+                for d in companies_list:
+                    message="<li>"+ d + "</li>"
+                    f.write(message)
+
+            with open("list_drug.html", "r") as f:
+                mensaje = f.read
                 self.wfile.write(bytes(message, "utf8"))
             self.wfile.write(bytes("</ul>", "utf8"))
 
@@ -121,7 +129,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
 
         return
-
 
 
 
@@ -137,4 +144,3 @@ except KeyboardInterrupt:
 httpd.server_close()
 print("")
 print("Server stopped!")
-
