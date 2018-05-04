@@ -15,6 +15,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         path = self.path
         list = []
+
         if path == "/":
             with open ("search_list.html", "r") as f:
                 code = f.read()
@@ -32,6 +33,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             conn.close()
             drug = json.loads(drugs_raw)
             drug_list = []
+    
             for i in range(len(drug["results"])):
                     drug_name = drug["results"][i]["openfda"]["brand_name"][0]
                     drug_list.append(drug_name)
