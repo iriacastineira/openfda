@@ -25,7 +25,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             conn = http.client.HTTPSConnection("api.fda.gov")
             information = path.split("?")[1]
             drug = information.split("=")[1].split("&")[0]
-            limit = information.split("&")[1].split("=")[1]
+            if "limit" in path:
+                limit = information.split("&")[1].split("=")[1]
+            else:
+                limit = "10"
             url = "/drug/label.json?search=active_ingredient:" + drug + "&" + "limit=" + limit
             conn.request("GET", url, None, header)
             r1 = conn.getresponse()
@@ -33,7 +36,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             conn.close()
             drug = json.loads(drugs_raw)
             drug_list = []
-    
             for i in range(len(drug["results"])):
                     drug_name = drug["results"][i]["openfda"]["brand_name"][0]
                     drug_list.append(drug_name)
@@ -50,7 +52,11 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             conn = http.client.HTTPSConnection("api.fda.gov")
             information = path.split("?")[1]
             company = information.split("=")[1].split("&")[0]
-            limit = information.split("&")[1].split("=")[1]
+            if "limit" in path:
+                limit = information.split("&")[1].split("=")[1]
+            else:
+                limit = "10"
+
             url = "/drug/label.json?search=manufacturer_name:" + company + "&" + "limit=" + limit
             conn.request("GET", url, None, header)
             r1 = conn.getresponse()
