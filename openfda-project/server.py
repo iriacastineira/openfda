@@ -25,10 +25,12 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             conn = http.client.HTTPSConnection("api.fda.gov")
             information = path.split("?")[1]
             drug = information.split("=")[1].split("&")[0]
-            if "limit" in path:
+            if 'limit' in path:
                 limit = information.split("&")[1].split("=")[1]
+                if limit == "":
+                    limit ='10'
             else:
-                limit = "10"
+                limit='10'
             url = "/drug/label.json?search=active_ingredient:" + drug + "&" + "limit=" + limit
             conn.request("GET", url, None, header)
             r1 = conn.getresponse()
@@ -37,25 +39,31 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             drug = json.loads(drugs_raw)
             drug_list = []
             for i in range(len(drug["results"])):
-                    drug_name = drug["results"][i]["openfda"]["brand_name"][0]
-                    drug_list.append(drug_name)
+                    try:
+                        drug_name = drug["results"][i]["active_ingredient"][0]
+                        drug_list.append(drug_name)
+                    except KeyError:
+                        drug_list.append('Unknown')
             self.wfile.write(bytes("<ul>","utf8"))
             for d in drug_list:
                 print(d)
                 message="<li>"+d+"</li>"
                 self.wfile.write(bytes(message,"utf8"))
-
             self.wfile.write(bytes("</ul>","utf8"))
+
+
 
         elif "searchCompany" in path:
             header = {'User-Agent': 'http-client'}
             conn = http.client.HTTPSConnection("api.fda.gov")
             information = path.split("?")[1]
             company = information.split("=")[1].split("&")[0]
-            if "limit" in path:
+            if 'limit' in path:
                 limit = information.split("&")[1].split("=")[1]
+                if limit == "":
+                    limit ='10'
             else:
-                limit = "10"
+                limit='10'
 
             url = "/drug/label.json?search=manufacturer_name:" + company + "&" + "limit=" + limit
             conn.request("GET", url, None, header)
@@ -73,7 +81,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 message="<li>"+ d+ "</li>"
                 self.wfile.write(bytes(message, "utf8"))
             self.wfile.write(bytes("</ul>", "utf8"))
-        elif "listDrug" in path:
+        elif "listDrugs" in path:
             header = {'User-Agent': 'http-client'}
             conn = http.client.HTTPSConnection("api.fda.gov")
 
