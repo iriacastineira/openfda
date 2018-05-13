@@ -16,7 +16,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         path = self.path
         list = []
         if path == "/":
-            with open ("search_list.html", "r") as f:
+            with open ("search_listprueba.html", "r") as f:
                 code = f.read()
                 self.wfile.write(bytes(code, "utf8"))
         elif "searchDrug" in path:

@@ -2,7 +2,7 @@ import http.server
 import socketserver
 import json
 import http.client
-
+socketserver.TCPServer.allow_reuse_adress = True
 IP = "localhost"
 PORT = 8000
 
@@ -130,6 +130,31 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(bytes("<ul>", "utf8"))
             for d in companies_list:
                 message="<li>"+ d+ "</li>"
+                self.wfile.write(bytes(message, "utf8"))
+            self.wfile.write(bytes("</ul>", "utf8"))
+        elif "listWarnings" in path:
+            header = {'User-Agent': 'http-client'}
+            conn = http.client.HTTPSConnection("api.fda.gov")
+            warning = self.path.split("?")[1]
+
+            url = "/drug/label.json?" + warning
+            information = path.split("?")[1]
+            limit = information.split("=")[1]
+            conn.request("GET", url, None, header)
+            r1 = conn.getresponse()
+            company_raw = r1.read().decode("utf-8")
+            conn.close()
+            warnings = json.loads(company_raw)
+            warnings_list = []
+            for i in range(len(warnings["results"])):
+                try:
+                    warnings_name = warnings["results"][i]["warnings"][0]
+                    warnings_list.append(warnings_name)
+                except KeyError:
+                    warnings_list.append('Unknown')
+            self.wfile.write(bytes("<ul>", "utf8"))
+            for d in warnings_list:
+                message="\n<li>"+ d+ "</li>"
                 self.wfile.write(bytes(message, "utf8"))
             self.wfile.write(bytes("</ul>", "utf8"))
 
