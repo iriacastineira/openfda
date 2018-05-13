@@ -135,11 +135,13 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif "listWarnings" in path:
             header = {'User-Agent': 'http-client'}
             conn = http.client.HTTPSConnection("api.fda.gov")
-            warning = self.path.split("?")[1]
-
-            url = "/drug/label.json?" + warning
-            information = path.split("?")[1]
-            limit = information.split("=")[1]
+            if 'limit' in path:
+                limit = path.split("=")[1]
+                if limit == "":
+                    limit ='10'
+            else:
+                limit='10'
+            url = "/drug/label.json?limit=" + limit
             conn.request("GET", url, None, header)
             r1 = conn.getresponse()
             company_raw = r1.read().decode("utf-8")
@@ -154,7 +156,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     warnings_list.append('Unknown')
             self.wfile.write(bytes("<ul>", "utf8"))
             for d in warnings_list:
-                message="\n<li>"+ d+ "</li>"
+                message="\n<li>\n"+ d+ "\n</li>"
                 self.wfile.write(bytes(message, "utf8"))
             self.wfile.write(bytes("</ul>", "utf8"))
 
