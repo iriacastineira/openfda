@@ -181,6 +181,15 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     message="\n<li>\n"+ d+ "\n</li>"
                     self.wfile.write(bytes(message, "utf8"))
                 self.wfile.write(bytes("</ul>", "utf8"))
+            elif "secret" in self.path:
+                self.send_response(401)
+                self.send_header("WWW-Authenticate", "Basic realm='You must authenticate")
+                self.end_headers()
+            elif "redirect" in self.path:
+                self.send_response(302)
+                self.send_header('Location', 'http://localhost:8000/')
+                self.end_headers()
+
             else:
                 self.send_response(404)
                 self.send_header('Content-type', 'text/html')
